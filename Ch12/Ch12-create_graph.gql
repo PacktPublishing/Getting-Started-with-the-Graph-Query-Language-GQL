@@ -1,0 +1,9 @@
+CREATE GRAPH TransactionGraph {
+  NODE Account ({ name string, balance double }),
+  NODE Loan ({ payment_method string, amount double, time datetime }),
+  NODE Corporation ({ name string }),
+  EDGE Transfer ()-[{amount double, time datetime}]->(),
+  EDGE Own ()-[{}]->(),
+  EDGE Related ()-[{}]->(),
+  EDGE Apply ()-[{}]->()
+} PARTITION BY HASH(Crc32) SHARDS [1]
