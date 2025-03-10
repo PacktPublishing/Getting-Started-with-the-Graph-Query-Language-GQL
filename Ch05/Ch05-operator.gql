@@ -1,0 +1,105 @@
+// RETURN 1 <> 1
+
+// RETURN "b" > "a"
+
+//LET d1 = DATE("2019-03-14"),
+//    d2 = DATE("2019-03-15")
+//RETURN d2 > d1
+
+//LET d1 = DATE("2024-10-31")
+//RETURN d1 < "2024-11-01"
+
+//RETURN TRUE = 1
+
+//RETURN TRUE > 0
+
+//RETURN FALSE = 0
+
+//RETURN TRUE = "true"
+
+//LET a = 1 RETURN a
+
+//MATCH p=()-() RETURN p
+
+//MATCH (n:Lang WHERE n.name = "GQL") SET n.year = 2024
+
+//RETURN "a" || "b"
+
+//LET a = TRUE, b = FALSE RETURN a OR b
+
+//LET a = 1 RETURN a > 0
+
+//LET a = 1, b = 10
+//RETURN ((a > 0 AND b > 5) OR b > 20) IS TRUE
+
+//RETURN "a" || "b"
+
+//RETURN UPPER("a")
+
+//RETURN (1 + 1) * 2
+
+//RETURN ABS(1-10)
+
+//LET d = DATE("2024-10-29")
+//RETURN d + DURATION("P1D")
+
+//LET d = DURATION("P1Y10M")
+//RETURN d - DURATION("P1Y")
+
+//LET date1 = DATETIME("2024-11-01T12:00:00")
+//    date2 = DATETIME("2024-09-30T10:58:50")
+//LET duration1 = DURATION_BETWEEN(date1, date2)
+//RETURN duration1
+
+//LET list1 = ["a", "b"], list2 = ["b", "c", "d"]
+//RETURN list1 || list2
+
+//LET p1 = [n1,e1,n2], p2 = [n2,e2,n3]
+//RETURN p1 || p2
+
+//LET v = VALUE { MATCH (n) RETURN n LIMIT 1 }
+//RETURN v
+
+//LET v = VALUE { INSERT (n:Person) }
+//RETURN v
+
+//LET v = LET a = 1, b = 2 IN a + b END
+//RETURN v
+
+//MATCH (g:Lang) 
+//RETURN
+//    CASE g.name 
+//      WHEN "GQL" THEN "Graph Query Language"
+//      WHEN "Cypher" THEN "Neo4J's Query Language"
+//      WHEN "UQL" THEN "Ultipa Query Language"
+//      ELSE "Other Languages" 
+//    END
+
+
+//CASE WHEN g.name = "GQL" THEN "Graph Query Language"
+//     WHEN g.name = "Cypher" THEN "Neo4J's Query Language"
+//     WHEN g.name = "UQL" THEN "Ultipa Query Language"
+//     ELSE "Other Languages"
+//END
+
+//RETURN NULLIF("a", "a")
+
+//RETURN NULLIF("a", "b")
+
+//RETURN NULLIF(NULL, "b")
+
+//RETURN COALESCE("a", "b")
+
+//RETURN COALESCE(NULL, "b")
+
+//RETURN COALESCE(NULL, NULL, "a")
+
+//RETURN COALESCE(NULL, NULL, "a")
+
+
+
+
+
+
+
+
