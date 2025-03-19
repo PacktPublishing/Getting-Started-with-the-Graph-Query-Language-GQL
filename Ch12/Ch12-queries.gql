@@ -1,0 +1,67 @@
+//MATCH p=()->() RETURN p
+
+//MATCH (n) RETURN count(n) as totalNodes
+
+//MATCH ()-[e]->() RETURN count(e) as totalEdges
+
+//MATCH (a:Account WHERE a.balance > 50000) RETURN a
+
+//MATCH (a:Account WHERE a.balance > 50000) RETURN count(a) as total, sum(a.balance)
+
+
+//MATCH p=(n:Account {_id : "account14i"})-[t:Transfer]->() RETURN t, p
+
+//MATCH p=(n:Account {_id : "account14i"})-[:Transfer]->{2}() RETURN p
+
+//MATCH p=(n:Account {_id : "account14i"})-[t:Transfer]->{2}(m WHERE m._id <> n._id) RETURN p
+
+//MATCH (ramos {name : "Ramos, Cooper and Barker"}) MATCH (ramos)-[t:Transfer]->() RETURN sum(t.amount)
+
+//CREATE INDEX name ON NODE Account (name(20))
+
+//MATCH (loan:Loan)
+//MATCH p=(borrower:Corporation)->(loan)-[:Transfer]->{1,5}(:Account)<-(borrower)
+//RETURN p
+
+//MATCH (loan:Loan)
+//MATCH p=(borrower:Corporation)->(loan)-[:Transfer]->{1,5}(:Account)<-(borrower)
+//LET Name = borrower.name, Reason = "Circular Loan Fraud"
+//RETURN DISTINCT table(Name, Reason)
+
+//CREATE HDC GRAPH TransactionGraph ON "hdc-server" 
+//OPTIONS {
+//	nodes: "*",
+//	edges: "*"
+//}
+
+//CALL algo.louvain.write("TransactionGraph", {
+//	params: {
+//		phase1_loop_num: 5, 
+//		min_modularity_increase: 0.1
+//	},
+//	return_params: {
+//		db: { property: 'communityID' }
+//	}
+//})
+
+//MATCH (n)
+//let cid = n.communityID
+//RETURN cid, count(n) as total
+//GROUP BY cid
+//ORDER BY total DESC
+//LIMIT 5
+
+//MATCH p=({communityID: 80})->({communityID: 80})
+//RETURN p
+
+//MATCH (n)
+//let cid = n.communityID
+//RETURN cid, count(n) as total
+//GROUP BY cid
+//ORDER BY total DESC
+//LIMIT 1
+//NEXT 
+//MATCH p=({communityID: cid})->({communityID: cid})
+//RETURN p
+
+
