@@ -1,3 +1,170 @@
 //SHOW GRAPH
 
-//
+//CREATE GRAPH userBehaviors {
+//    NODE Person (:Person {name string, age int32}),
+//    EDGE Follows ()-[:Follows]->()
+//} 
+//ON SHARDS ['1', '2', '3'] 
+//PARTITION BY CRC32
+//COMMENT 'a graph stores user behavior'
+
+//ALTER GRAPH QueryLanguage RENAME TO QueryLang
+
+//ALTER GRAPH QueryLanguage COMMENT 'a graph stores query language.'
+
+//SHOW NODE SCHEMA
+
+//ALTER GRAPH userBehaviors 
+//ADD NODE { 
+//    User (:User { name string, age int32} ),
+//    Product (:Product {name string, price float})
+//}
+
+//ALTER GRAPH userBehaviors DROP NODE User, Product
+
+//ALTER NODE User RENAME TO Person
+
+//ALTER NODE User COMMENT 'user details.'
+
+//SHOW NODE PROPERTY
+
+//SHOW NODE User PROPERTY
+
+//ALTER NODE User ADD PROPERTY {name string, age int32}
+
+//ALTER NODE User DROP PROPERTY name, age
+
+//ALTER NODE * ADD PROPERTY {rank float}
+
+//ALTER NODE * DROP PROPERTY rank
+
+//ALTER NODE Person RENAME PROPERTY name TO username
+
+//ALTER NODE Person ADD CONSTRAINT cons_name NOT NULL (name)
+
+//ALTER NODE Person DROP CONSTRAINT cons_name
+
+//ALTER EDGE * ADD CONSTRAINT EDGE KEY edge_key (id)
+
+//CREATE INDEX name ON NODE Person ( firstname(10) )
+
+//ON NODE Person ( firstname(10), lastname(10) )
+
+//CREATE FULLTEXT name ON NODE Person ( firstname )
+
+//CREATE VECTOR INDEX factor ON NODE * (embedding) OPTIONS {
+//	vector.dimensions : 1024,
+//	vector.similarity_function : 'cosine'
+//}
+
+//SHOW NODE INDEX
+
+//SHOW NODE FULLTEXT
+
+//DROP NODE INDEX username
+
+//SHOW HDC GRAPHS
+
+//CREATE HDC GRAPH queryLang ON "hdc-server" 
+//OPTIONS {
+//  nodes: { 
+//    Lang: "*",
+//    DB: "*"
+//  },
+//  edges: "*"
+//}
+
+//CREATE HDC GRAPH queryLang ON "hdc-server" 
+//OPTIONS {
+//  queries: ["MATCH (source:Lang)-[edge]->(target:DB)  RETURN source, edge, target"]
+//}
+
+//CREATE HDC GRAPH queryLang ON "hdc-1" 
+//OPTIONS {
+//  nodes: { 
+//    Lang: "*",
+//    DB: "*"
+//  },
+//  edges: "*",
+//  update: "sync",
+//}
+
+//DROP HDC GRAPH queryLang
+
+//CALL algo.degree("queryLang", {
+//  params: {
+//  direction: "out",
+//  order: "desc",
+//  limit: 10
+//}, return_params: { stream: {} } }) YIELD topDegree
+//MATCH (n WHERE n._uuid = topDegree._uuid)
+//RETURN n
+
+//SHOW USERS
+
+//CREATE USER user001 WITH PASSWORD '@passwor6'
+
+//DROP USER user001
+
+//ALTER USER user001 RENAME TO user1
+
+//ALTER USER user1 SET PASSWORD 'New@Passwor5'
+
+//GRANT ['CREATE_USER', 'DROP_USER'] TO user001
+
+//GRANT * TO USER user001
+
+//REVOKE ['CREATE_USER', 'DROP_USER'] FROM user001
+
+//GRANT ['INSERT', 'DELETE'] ON QueryLanguage TO user001
+
+//GRANT * ON QueryLanguage TO user001
+
+//GRANT * ON * TO user001
+
+//REVOKE * ON QueryLanguage FROM user001
+
+//GRANT ['READ'] ON NODE Person (name, age) TO user001
+
+//GRANT * ON NODE Person * TO user001
+
+//GRANT * ON NODE * * TO user001
+
+//REVOKE ['WRITE'] ON NODE Person * FROM user001
+
+//SHOW ROLES
+
+//CREATE ROLE readOnly
+
+//DROP ROLE readOnly
+
+//GRANT ['SHOW_GRAPH','SHOW_USER'] TO ROLE readOnly
+
+//GRANT ['READ,'SHOW_SCHEMA'] ON QueryLanguage TO ROLE readOnly
+
+//REVOKE ['WRITE'] ON QueryLanguage * FROM ROLE readOnly
+
+//GRANT ROLE readOnly TO user001
+
+//GRANT ROLE readOnly TO ROLE admin
+
+//SHOW JOBS
+
+//STOP JOB 1
+
+//DELETE JOB 1
+
+//TRUNCATE GRAPH QueryLanguage
+
+//TRUNCATE QueryLanguage
+
+//TRUNCATE NODE * ON QueryLanguage
+
+//TRUNCATE NODE Person ON QueryLanguage
+
+//MATCH (p:Person) DELETE p
+
+
+
+
+
