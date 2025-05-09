@@ -1,0 +1,12 @@
+CREATE PROPERTY GRAPH QLGraph {
+  NODE Lang ({name string, year int32}),
+  NODE Company ({name string}),
+  NODE Person ({name string}),
+  NODE Category ({name string}),
+  NODE Location ({name string}),
+  EDGE FOUNDED_BY ()-[]->(),
+  EDGE WORKED_FOR ()-[]->(),
+  EDGE LOCATED_IN ()-[{startYear int32}]->(),
+  EDGE LIVES_IN ()-[]->(),
+  EDGE BELONGS_TO ()-[]->()
+}
