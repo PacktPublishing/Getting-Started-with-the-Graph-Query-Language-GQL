@@ -1,3 +1,4 @@
+// create graph
 CREATE PROPERTY GRAPH QLGraph {
   NODE Lang ({name string, year int32}),
   NODE Company ({name string}),
@@ -10,3 +11,30 @@ CREATE PROPERTY GRAPH QLGraph {
   EDGE LIVES_IN ()-[]->(),
   EDGE BELONGS_TO ()-[]->()
 }
+
+
+// create graph type
+CREATE GRAPH TYPE QLGraphType {
+  NODE Lang ({name string, year int32}),
+  NODE Company ({name string}),
+  NODE Person ({name string}),
+  NODE Category ({name string}),
+  EDGE FOUNDED_BY ()-[]->(),
+  EDGE WORKED_FOR ()-[]->(),
+  EDGE LOCATED_IN ()-[{startYear int32}]->(),
+  EDGE LIVES_IN ()-[]->(),
+  EDGE BELONGS_TO ()-[]->()
+}
+
+// create graph type by an existing graph
+CREATE GRAPH TYPE QLGraphModel LIKE QLGraph
+
+// copy a graph type
+CREATE GRAPH TYPE QLGraphModel2 COPY OF QLGraphModel
+
+// drop graph type
+DROP GRAPH TYPE QLGraphModel2
+
+// drop graph type if it exists
+DROP GRAPH TYPE IF EXISTS QLGraphModel2
+

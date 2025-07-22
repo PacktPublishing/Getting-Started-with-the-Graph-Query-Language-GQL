@@ -1,0 +1,58 @@
+// match any nodes
+MATCH (n) RETURN n
+
+// match Lang nodes
+MATCH (n IS Lang) RETURN n
+
+// or
+MATCH (n:Lang) RETURN n
+
+// match Lang node with name "GQL"
+MATCH (n IS Lang WHERE n.name = "GQL") RETURN n
+
+// or
+MATCH (n:Lang {name: "GQL"}) RETURN n
+
+// match not Lang nodes
+MATCH (n IS !Lang) RETURN n
+
+// match Person or Company nodes
+MATCH (n IS Person|Company) RETURN n
+
+// match all edges
+MATCH -[edges]- RETURN edges
+
+// match all edges with a direction
+MATCH -[edges]-> RETURN edges
+
+// match LOCATED_IN edges with direction
+MATCH -[edges IS LOCATED_IN]-> RETURN edges
+
+// match LOCATED_IN edges with direction and the property startYear greater than 2000
+MATCH -[edge IS LOCATED_IN WHERE edge.startYear > 2000]->
+RETURN edge
+
+// match a 1-hop path
+MATCH p=()-[]-() RETURN p
+
+// or
+MATCH p=()-() RETURN p
+
+// matching a path from a Lang named “GQL" to a Person and retrieving both the path and the person nodes.
+MATCH p=(l IS Lang WHERE l.name = "GQL")-(founder IS Person)
+RETURN p, founder
+
+// match languages that have the same category as GQL
+MATCH (l IS Lang WHERE l.name = "GQL")-(IS Category)-(otherLangs IS Lang)
+RETURN otherLangs AS languages
+
+// match by conncected path patterns 
+MATCH (l IS Lang WHERE l.name = "GQL"), (l)-(c:Category)
+RETURN c AS category
+
+// 
+MATCH (gql IS Lang WHERE gql.name = "GQL"),
+      (uql IS Lang WHERE uql.name = "UQL"),
+      (gql)-(c IS Category)-(uql),
+      (c)-(otherLanguages IS Lang)
+RETURN otherLanguages
