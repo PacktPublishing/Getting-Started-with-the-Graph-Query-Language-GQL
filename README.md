@@ -13,7 +13,7 @@ Discover over 50 practical examples and a real-world case study to help you buil
 
 ### Book Description
 
-Graph Query Language (GQL) is a universal language for graph databases, designed to manage and support interconnected analytics and Gen-AI capabilities. Authored by a team of industry veterans, this book simplifies GQL concepts, including graph terms, definitions, the catalog's hierarchical system, and its objects.
+Graph Query Language (ISO GQL) is a standard language for databases, designed to manage and support graph data analytics. Authored by a team of industry veterans, this book simplifies GQL concepts, including graph terms, definitions, the catalog's hierarchical system, and its objects.
 
 Through practical examples, you'll master graph data types, value expressions, graph matching patterns, data and catalog modifying statements, functions, and various clauses. With access to the GQL Playground via Ultipa Graph, you'll gain hands-on experience in querying and manipulating graph data.
 
