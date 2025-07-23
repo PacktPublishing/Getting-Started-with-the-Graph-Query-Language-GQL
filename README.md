@@ -32,7 +32,7 @@ By the end of this book, you'll be proficient in using GQL to query and update d
 
 ### Who This Book Is For
 
-This book is ideal for graph database developers, DBAs, programmers, data engineers, and analysts eager to learn the new graph database standard, GQL. A basic understanding of graph and relational databases, data models, SQL basics, and programming will make the content easier to grasp. While the book is accessible to those without a background in graph theory, familiarity with concepts like nodes, edges, relationships, and the distinction between directed and undirected graphs will enhance your learning experience.
+This book is ideal for graph database developers, DBAs, programmers, data engineers, and analysts eager to learn the new graph database standard, GQL. A basic understanding of graph and relational databases, data models, and programming will make the content easier to grasp. While the book is accessible to those without a background in graph theory, familiarity with concepts like nodes, edges, relationships, and the distinction between directed and undirected graphs will enhance your learning experience.
 
 ### Purchase Link
 
