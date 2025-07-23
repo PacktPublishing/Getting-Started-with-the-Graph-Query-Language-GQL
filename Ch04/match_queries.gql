@@ -50,9 +50,197 @@ RETURN otherLangs AS languages
 MATCH (l IS Lang WHERE l.name = "GQL"), (l)-(c:Category)
 RETURN c AS category
 
-// 
+// finding query languages in the same category as GQL and UQL
 MATCH (gql IS Lang WHERE gql.name = "GQL"),
       (uql IS Lang WHERE uql.name = "UQL"),
       (gql)-(c IS Category)-(uql),
       (c)-(otherLanguages IS Lang)
 RETURN otherLanguages
+
+// match disconnected path patterns
+MATCH (person IS Person), (location IS Location)
+RETURN person, location
+
+// match 1-2 hop path from GQL
+MATCH p=(n WHERE n.name = "GQL")-[]-()
+RETURN p
+Chapter 4 19
+UNION
+MATCH p=(n WHERE n.name = "GQL")-[]-()-[]-()
+RETURN p
+
+// using quantified path matching
+MATCH p=(n WHERE n.name = "GQL")-[]-{1,2}()
+RETURN p
+
+// match with repreated fragments
+MATCH (meta {name: "Meta"}), (apache {name: "Apache Software Foundation"})
+MATCH p=(meta)-[]-(()-[]-()){2}-[]-(apache)
+RETURN p
+
+// match with repreated fragments including a filter
+MATCH (meta {name: "Meta"}), (apache {name: "Apache Software Foundation"})
+MATCH p=(meta)-(()-[]-(IS !Company)){1,2}-(apache)
+RETURN p
+
+// return all variables
+MATCH p=(lang IS Lang)-(category IS Category) RETURN *
+
+// return a distinct property
+MATCH (lang IS Lang) RETURN DISTINCT lang.year
+
+// return aggregated results with group by
+MATCH (c IS Category)-[]-(l IS Lang)
+RETURN count(l), c.name AS categoryName
+GROUP BY categoryName
+
+// using FILTER WHERE clause
+MATCH (l IS Lang) FILTER WHERE l.year > 2000 RETURN l
+
+// or FILTER
+MATCH (l IS Lang ) FILTER l.year > 2000 RETURN l
+
+// equivalent to 
+MATCH (l IS Lang WHERE l.year > 2000 ) RETURN l
+
+// and
+MATCH (l IS Lang) WHERE l.year > 2000 RETURN l
+
+// ordering by a property
+MATCH (g IS Lang) RETURN g ORDER BY g.year ASC
+
+// equivalent to 
+MATCH (g IS Lang) RETURN g ORDER BY g.year
+
+// ordering results and put NULL values to last
+MATCH (g IS Lang) RETURN g ORDER BY g.year ASC NULLS LAST
+
+// limit total results to 1
+MATCH (n:Lang) RETURN n LIMIT 1
+
+// or
+MATCH (n:Lang) LIMIT 1 RETURN n 
+
+// using LIMIT at different positions
+MATCH (n:Lang) LIMIT 5
+MATCH (n)-(c IS Category) LIMIT 2
+RETURN c LIMIT 1
+
+// skip 1 result
+MATCH (n:Lang) SKIP 1 RETURN n
+
+// or
+MATCH (n:Lang) RETURN n SKIP 1
+
+// skip result at different positions
+MATCH (n IS Lang) SKIP 1
+MATCH (n)-(c IS Category) SKIP 2 RETURN c
+
+// paging results
+// SKIP <page_size> * <page_num - 1> LIMIT <page_size>
+MATCH (n IS Lang) RETURN n SKIP 5 LIMIT 5
+
+
+// grouping results by category name, returning total Lang for each one
+MATCH (g IS Lang)-(c IS Category)
+RETURN count(g), c.name as cateName
+GROUP BY cateName
+
+// inserting nodes
+INSERT (:Lang {name: "UQL"}), (:Company {name: "Ultipa"})
+
+// inserting edge for existing nodes
+MATCH (g:Lang {name: "UQL"}), (c:Category {name: "Graph"})
+INSERT (g)-[:BELONGS_TO]->(c)
+
+// inserting a paths, new nodes and edges
+INSERT (:Lang {name: "UQL"})-[:FOUNDED_BY]->(:Company {name: "Ultipa"})
+
+// or
+INSERT (uql:Lang {name: "UQL"}), (ultipa:Company {name: "Ultipa"}),
+       (uql)-[:FOUNDED_BY]->(ultipa)
+
+// inserting new nodes and edges, then return them
+INSERT (uql:Lang {name: "UQL"}), (ultipa:Company {name: "Ultipa"}),
+       (uql)-[e:FOUNDED_BY]->(ultipa)
+RETURN uql, ultipa, e
+
+// update property
+MATCH (uql IS Lang WHERE uql.name = "UQL")
+SET uql.year = 2019
+
+// update all properties for a node, set NULL if the property is not specified
+MATCH (uql IS Lang WHERE uql.name = "UQL")
+SET uql = { name: "Ultipa Query Language", year: 2019 }
+
+// update multiple properties for a node
+MATCH (uql IS Lang WHERE uql.name = "Ultipa Query Language")
+SET uql.name = "UQL", uql.year = 2019
+
+// update properties and return results
+MATCH (uql IS Lang WHERE uql.name = "UQL")
+SET uql.name = "Ultipa Query Language",
+uql.year = 2019
+RETURN uql
+
+// reverse changes
+MATCH (uql WHERE uql.name = "Ultipa Query Language")
+SET uql.name = "UQL"
+
+// delete a node
+MATCH (g IS Lang WHERE g.name = "SQL")
+DELETE g
+
+// delete a node and edges connected to it
+MATCH (g IS Lang WHERE g.name = "SQL")-[e]-()
+DELETE e
+DELETE g
+
+// or
+MATCH (g IS Lang WHERE g.name = "SQL)
+DETACH DELETE 
+
+// remove a property
+MATCH (g WHERE g.name = "GQL") REMOVE g.year
+
+// merge 2 results from queries
+MATCH (n:Lang) LIMIT 3 RETURN n
+UNION
+MATCH (n:Lang) LIMIT 4 RETURN n
+
+// merge 2 results queries, allow duplicated records
+MATCH (n:Lang) LIMIT 3 RETURN n
+UNION ALL
+MATCH (n:Lang) LIMIT 4 RETURN n
+
+// exclusing records obtained from the second query
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 10
+EXCEPT
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 1
+
+// exclusing records obtained from the second query without removing duplicates
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 10
+EXCEPT ALL
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 1
+
+// return the interseciton of 2 queries
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 10
+INTERSECT
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 2
+
+// return the interseciton of 2 queries without removing duplicates
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 10
+INTERSECT ALL
+MATCH (n:Lang)-(c:Category) RETURN c LIMIT 2
+
+// select variable g for the following statements
+MATCH p=(g:Lang) YIELD g RETURN g
+
+// select variables from a CALL Algo
+CALL hdc.algo.degree("gql_g1",{
+    params: {}
+}) YIELD results
+RETURN results
+
+
+

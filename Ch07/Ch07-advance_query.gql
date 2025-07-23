@@ -1,186 +1,286 @@
-//MATCH p= TRAIL PATHS ()-() RETURN p
+// trail path mode
+MATCH p= TRAIL PATHS ()-() RETURN p
 
-//MATCH p= TRAIL ()-() RETURN p
+// or
+MATCH p= TRAIL ()-() RETURN p
 
-//MATCH p=WALK ({_id: "a"})->{1,4}() RETURN p
+// path modes
+MATCH p = WALK ({_id: "a"})->{1,4}() RETURN p
 
-//MATCH p=TRAIL ({_id: "a"})->{1,4}() RETURN p
+MATCH p = TRAIL ({_id: "a"})->{1,4}() RETURN p
 
-//MATCH p=ACYCLIC ({_id: "a"})->{1,4}() RETURN p
+MATCH p = ACYCLIC ({_id: "a"})->{1,4}() RETURN p
 
-//MATCH p=SIMPLE ({_id: "a"})->{1,4}() RETURN p
+MATCH p = SIMPLE ({_id: "a"})->{1,4}() RETURN p
 
+// match mode - REPEATABLE ELEMENTS
 //MATCH REPEATABLE ELEMENTS p=()-() RETURN p
 
-//MATCH (a: {_id: "a"})
-//MATCH REPEATABLE ELEMENTS p1=TRAIL (a)-(x),
-//                          p2=TRAIL (x)-()-(f)
-//RETURN count(f),x._id
-//GROUP BY x
+// match mode work with path mode
+MATCH (a: {_id: "a"})
+MATCH REPEATABLE ELEMENTS p1=TRAIL (a)-(x),
+                          p2=TRAIL (x)-()-(f)
+RETURN count(f),x._id
+GROUP BY x
 
-//MATCH (a: {_id: "a"})
-//MATCH DIFFERENT EDGES p1=TRAIL (a)-(x),
-//                      p2=TRAIL (x)-()-(f)
-//RETURN count(f), x._id
-//GROUP BY x
+// match mode.- DIFFERENT EDGES
+MATCH (a: {_id: "a"})
+MATCH DIFFERENT EDGES p1=TRAIL (a)-(x),
+                      p2=TRAIL (x)-()-(f)
+RETURN count(f), x._id
+GROUP BY x
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ALL (a)-()-(c) RETURN p
+// path prefix `ALL` - create graph
+CREATE GRAPH Ch07_3 {
+    NODE Node ({}),
+    EDGE Edge ()-[{}]->()
+}
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY 1 (a)-()-(c) RETURN p
+// path prefix `ALL` - insert graph data
+INSERT (a:Node {_id: "a"}), (b:Node {_id: "b"}), (c:Node {_id: "c"}), (d:Node {_id: "d"}),
+(a)-[:Edge]->(b), (b)-[:Edge]->(c), (a)-[:Edge]->(d), (d)-[:Edge]->(c)
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY (a)-()-(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY 3 (a)-()-(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ALL SHORTEST (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ALL SHORTEST (a)->{3,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY SHORTEST (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY 2 SHORTEST (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 1 (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 3 (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 1 GROUP (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 2 GROUPS (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 2 GROUPS (a)->{1,5}(c) 
-//LET pathLength = LENGTH(p)
-//RETURN count(p), pathLength 
-//GROUP BY pathLength 
-
-//MATCH (source:Category {name: "Graph"})
-//MATCH p=ALL SHORTEST (source)-{3}(n) 
-//RETURN n
-//EXCEPT 
-//MATCH (source:Category {name: "Graph"})
-//MATCH p=SHORTEST 2 GROUPS (source)-{1,2}(n) 
-//RETURN n
-
-//MATCH (TEMP c:Category) -[]-> (g:Lang)
-//WHERE c.name = "Graph"
-//RETURN g.name
-
-//MATCH (TEMP c:Category) -[]-> (g:Lang)
-//WHERE c.name = "Graph"
-//RETURN g.name, c.name
-
-//MATCH (c:Category)
-//MATCH (c)-(g:Lang)
-//RETURN c.name as name, COUNT(n) as total
-//GROUP BY name
-
-//MATCH (c:Category)
-//CALL {
-//    MATCH (c)-(g:Lang) 
-//    RETURN COUNT(g) as total
-//}
-//RETURN c.name as name, total
-
-//MATCH (c:Category)
-//CALL { 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COUNT(g:Lang) as total 
-//}
-//FILTER total > 2
-//RETURN g.name as name, total
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p=ALL SHORTEST (a)-[e]->{1,5}(c)
-//RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p=SHORTEST 10 (a)-[e]->{1,5}(c)
-//CALL {
-//    FOR edge IN e
-//    RETURN SUM(edge.rank) as weight
-//}
-//RETURN p, weight
-//ORDER BY weight ASC
-//LIMIT 1
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p=SHORTEST 10 (a)-[e]->{1,5}(c)
-//let weight = REDUCE(weight=0, edge in e | weight + edge.rank)
-//RETURN p, weight
-//ORDER BY weight ASC
-//LIMIT 1
-
-//CALL algo.page_rank("QueryLanguage", {
-//    params: { order: "DESC" }
-//}) YIELD rank 
-//MATCH (n {_uuid: rank._uuid})
-//RETURN n.name LIMIT 10
-
-//FOR queryName in ["GQL", "UQL", "nonQuery"]
-//OPTIONAL MATCH (g {name: queryName})
-//RETURN queryName, g.year
-
-//FOR queryName in ["GQL", "UQL", "nonQuery"]
-//OPTIONAL { 
-//    MATCH (g {name: queryName}) 
-//    MATCH (g)-(c:Category) 
-//}
-//RETURN c.name
-
-//FOR queryName in ["GQL", "UQL", "nonQuery"]
-//OPTIONAL ( 
-//    MATCH (g {name: queryName}) 
-//    MATCH (g)-(c:Category) 
-//)
-//RETURN c.name
-
-//FOR category in ["Graph", "Relational", "Quantum"]
-//OPTIONAL CALL { 
-//    MATCH (c {name: category }) 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COLLECT_LIST(g.name) as languages
-//}
-//RETURN category, languages
-
-//FOR category in ["Graph", "Relational", "Quantum"]
-//OPTIONAL CALL { 
-//    MATCH (c {name: category }) 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COLLECT_LIST(g.name) as languages
-//}
-//LET languages = COALESCE(languages, [])
-//RETURN category, languages
-
-//FOR category in ["Graph", "Relational", "Quantum"]
-//OPTIONAL CALL { 
-//    MATCH (c {name: category }) 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COLLECT_LIST(g.name) as languages
-//}
-//LET lang = CASE WHEN languages IS NULL 
-//                THEN [] 
-//                ELSE languages
-//           END
-//RETURN category, languages
+// path prefix `ALL` - match graph data
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = ALL (a)-()-(c)
+RETURN p
 
 
+// path prefix `ANY` - update graph data
+MATCH (d:Node {_id: "d"})
+INSERT (d)-[r:Edge]->(e:Node {_id: "e"})
+RETURN d, r, e
 
+// path prefix `ANY` - match 1 path for each pair of nodes
+MATCH (a {_id: "a"}), (ce WHERE ce._id = "c" OR ce._id = "e")
+MATCH p = ANY 1 (a)-()-(ce)
+RETURN p
 
+// or
+MATCH (a {_id: "a"}), (ce WHERE ce._id = "c" OR ce._id = "e")
+MATCH p = ANY (a)-()-(ce)
+RETURN 
 
+// path prefix `ANY` - match 2 paths for each pair of nodes
+MATCH (a {_id: "a"}), (ce WHERE ce._id = "c" OR ce._id = "e")
+MATCH p = ANY 2 (a)-()-(ce)
+RETURN p
 
+// path prefix `SHORTEST` - update data
+INSERT (n:Node {_id: "f"}) RETURN n
 
+MATCH (b {_id: "b"}), (d {_id: "d"}), (a {_id: "a"}), (f {_id: "f"}), (e {_id: "e"})
+INSERT (b)-[:Edge]->(d), (a)-[:Edge]->(f), (e)-[:Edge]->(f)
 
+// path prefix `ALL SHORTEST` - find shortest paths
+MATCH (a WHERE a._id = "a"), (cf WHERE cf._id IN ["c", "f"])
+MATCH p = ALL SHORTEST (a)->{1,5}(cf)
+RETURN p
+
+// path prefix `ALL SHORTEST` - find shortest paths with different path pattern quantifier
+MATCH (a WHERE a._id = "a"), (cf WHERE cf._id IN ["c", "f"])
+MATCH p = ALL SHORTEST (a)->{3,5}(cf) 
+RETURN p
+
+// match a shortest path from node a to c
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = ANY SHORTEST (a)->{1,5}(c) 
+RETURN p
+
+// find one shortest path for each partition
+MATCH (a WHERE a._id = "a"), (cf WHERE cf._id IN ["c", "f"])
+MATCH p = ANY SHORTEST (a)->{1,5}(cf) 
+RETURN p
+
+// find two shortest paths for each partition
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = ANY 2 SHORTEST (a)->{1,5}(c)
+RETURN p
+
+// return one shortest paths for each partition
+MATCH (a WHERE a._id = "a"), (cf WHERE cf._id IN ["c", "f"])
+MATCH p = SHORTEST 1 (a)->{1,5}(cf)
+RETURN p
+
+// return two shortest paths for each partition
+MATCH (a WHERE a._id = "a"),(cf WHERE cf._id IN ["c", "f"])
+MATCH p = SHORTEST 2 (a)->{1,5}(cf)
+RETURN p
+
+// return first group of shortest paths
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = SHORTEST 1 GROUP (a)->{1,5}(c)
+RETURN p
+
+// return first and second group of shortest paths
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = SHORTEST 2 GROUPS (a)->{1,5}(c)
+RETURN p
+
+// explain the 2 groups for previous query
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = (a)->{1,5}(c)
+LET pathLength = LENGTH(p)
+RETURN count(p), pathLength
+GROUP BY pathLength
+
+// return group of shortest paths for each partition
+MATCH (a WHERE a._id = "a"),
+(cf WHERE cf._id IN ["c", "f"])
+Chapter 7 17
+MATCH p = SHORTEST 1 GROUP (a)->{1,5}(cf)
+RETURN p
+
+// count k-hop neighbors 
+MATCH (a {_id: "a"})
+MATCH p = ANY SHORTEST (a)->{1,2}(n)
+RETURN n
+EXCEPT DISTINCT
+MATCH (a {_id: "a"})
+MATCH p = ANY SHORTEST (a)->{1}(n)
+RETURN n
+
+// use temp variable in a path pattern
+MATCH (TEMP c:Category WHERE c.name = "Graph")-[]->(g:Lang)
+RETURN g.name
+
+// use temp variable in a path pattern - bad query
+MATCH (TEMP c:Category)-[]->(g:Lang)
+FILTER c.name = "Graph"
+RETURN g.name
+
+// count neighbors for start nodes
+MATCH (start)
+MATCH (start)-(end)
+RETURN start._id as startNode, COUNT(end) as total
+GROUP BY startNode
+
+// use CALL to count neighbors
+MATCH (start)
+CALL {
+    MATCH (start)-(end)
+    RETURN COUNT(end) as total
+}
+RETURN start._id as startNode, total
+
+// use CALL to count neighbors and filter it
+MATCH (start)
+CALL {
+    MATCH (start)-(end)
+    RETURN COUNT(end) as total
+}
+FILTER total > 2
+RETURN start._id as startNode, total
+
+// aggregating values in paths - create graph
+CREATE GRAPH Ch07_7 {
+    NODE Node ({}),
+    EDGE Edge ()-[{rank float}]->()
+}
+
+// aggregating values in paths - insert data
+INSERT (a:Node {_id: "a"}),
+(b:Node {_id: "b"}),
+(c:Node {_id: "c"}),
+(d:Node {_id: "d"}),
+(a)-[:Edge{rank: 1}]->(b),
+(b)-[:Edge{rank: 3}]->(c),
+(a)-[:Edge{rank: 5}]->(d),
+(d)-[:Edge{rank: 1}]->(c),
+(b)-[:Edge{rank: 1}]->(d)
+
+// aggregating values in paths - match shortest path
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = ALL SHORTEST (a)-[e]->{1,5}(c)
+RETURN p
+
+// aggregating values in paths - match 10 shortest paths and calculate weight
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p = SHORTEST 10 (a)-[e]->{1,5}(c)
+CALL {
+    FOR edge IN e
+    RETURN SUM(edge.rank) as weight
+}
+RETURN p, weight
+ORDER BY weight ASC
+LIMIT 1
+
+// aggregating values in paths - use reduce function
+MATCH (a {_id: "a"}), (c {_id: "c"})
+MATCH p=SHORTEST 10 (a)-[e]->{1,5}(c)
+let weight = REDUCE(weight=0, edge in e | weight + edge.rank)
+RETURN p, weight
+ORDER BY weight ASC
+LIMIT 1
+
+// create HDC graph
+CREATE HDC GRAPH Ch07_7_hdc ON "hdc-server" OPTIONS {
+    nodes: { "*" : ["*"]},
+    edges: { "*" : ["*"]}
+}
+
+// execute page rank procedure
+CALL algo.page_rank("Ch07_7_hdc", {
+    params: { order: "DESC" }
+}) YIELD rank
+MATCH (n {_uuid: rank._uuid})
+RETURN n LIMIT 10
+
+// usage of OPTIONAL
+FOR id in ["a", "b", "z"]
+OPTIONAL MATCH (n {_id: id})
+RETURN n
+
+// compare to OPTIONAL
+FOR id in ["a", "b", "z"]
+MATCH (n {_id: id})
+RETURN n
+
+// use OPTIONAL for multiple statements
+FOR id in ["a", "b", "z"]
+OPTIONAL {
+    MATCH (start {_id: id})
+    MATCH (start)->(end)
+}
+RETURN end._id
+
+// or 
+FOR id in ["a", "b", "z"]
+OPTIONAL (
+    MATCH (start {_id: id})
+    MATCH (start)->(end)
+)
+RETURN end._id
+
+// use OPTIONAL with CALL
+FOR id in ["a", "b", "z"]
+OPTIONAL CALL {
+    MATCH (start {_id: id })
+    MATCH (start)-(end)
+    RETURN COLLECT_LIST(end._id) as neigbours
+}
+RETURN id, neigbours
+
+// use OPTIONAL with CALL and replacing NULL with a empty list
+FOR id in ["a", "b", "z"]
+OPTIONAL CALL {
+    MATCH (start {_id: id })
+    MATCH (start)-(end)
+    RETURN COLLECT_LIST(end._id) as neigbours
+}
+LET neigbours = COALESCE(neigbours, [])
+RETURN id, neigbours
+
+// or
+FOR id in ["a", "b", "z"]
+OPTIONAL CALL {
+    MATCH (start {_id: id })
+    MATCH (start)-(end)
+    RETURN COLLECT_LIST(end._id) as neigbours
+}
+LET neigbours = CASE WHEN neigbours IS NULL
+                    THEN []
+                    ELSE neigbours
+                END
+RETURN id, neigbours
 

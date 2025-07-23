@@ -1,186 +1,71 @@
-//MATCH p= TRAIL PATHS ()-() RETURN p
+// set GQL schema
+SESSION SET SCHEMA /root/mySchema
 
-//MATCH p= TRAIL ()-() RETURN p
+// set graph 
+SESSION SET PROPERTY GRAPH myGraph
 
-//MATCH p=WALK ({_id: "a"})->{1,4}() RETURN p
+// or 
+SESSION SET GRAPH myGraph
 
-//MATCH p=TRAIL ({_id: "a"})->{1,4}() RETURN p
+// set time zone
+SESSION SET TIME ZONE "+01:00"
 
-//MATCH p=ACYCLIC ({_id: "a"})->{1,4}() RETURN p
+// set a graph parameter to CURRENT_GRAPH
+SESSION SET GRAPH $mainGraph = CURRENT_GRAPH
 
-//MATCH p=SIMPLE ({_id: "a"})->{1,4}() RETURN p
+// set a graph parameter with value QueryLanguage
+SESSION SET GRAPH $mainGraph = QueryLanguage
 
-//MATCH REPEATABLE ELEMENTS p=()-() RETURN p
+// use graph and run query
+USE $mainGraph
+MATCH (n) RETURN n LIMIT 10
 
-//MATCH (a: {_id: "a"})
-//MATCH REPEATABLE ELEMENTS p1=TRAIL (a)-(x),
-//                          p2=TRAIL (x)-()-(f)
-//RETURN count(f),x._id
-//GROUP BY x
+// set a table from a query
+SESSION SET TABLE $table1 = { MATCH (n:Lang) RETURN n }
 
-//MATCH (a: {_id: "a"})
-//MATCH DIFFERENT EDGES p1=TRAIL (a)-(x),
-//                      p2=TRAIL (x)-()-(f)
-//RETURN count(f), x._id
-//GROUP BY x
+// run query with the table parameter
+FOR row IN $table1
+LET n = row.n
+RETURN COUNT(n), AVG(n.year)
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ALL (a)-()-(c) RETURN p
+// set a value
+SESSION SET VALUE $query = "GQL"
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY 1 (a)-()-(c) RETURN p
+// use value
+MATCH (n:Lang WHERE n.name = $query) RETURN n
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY (a)-()-(c) RETURN p
+// set multipe parameters
+SESSION SET SCHEMA /
+SESSION SET $graph = QueryLanguage
+SESSION SET TIME ZONE "+02:00"
+SESSION SET $query = "GQL"
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY 3 (a)-()-(c) RETURN p
+// reset session settings
+SESSION RESET
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ALL SHORTEST (a)->{1,5}(c) RETURN p
+// reset all session parameters
+SESSION RESET ALL PARAMETERS
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ALL SHORTEST (a)->{3,5}(c) RETURN p
+// or
+SESSION RESET ALL CHARACTERISTICS
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY SHORTEST (a)->{1,5}(c) RETURN p
+// reset schema
+SESSION RESET SCHEMA
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = ANY 2 SHORTEST (a)->{1,5}(c) RETURN p
+// reset graph
+SESSION RESET GRAPH
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 1 (a)->{1,5}(c) RETURN p
+// reset time zone
+SESSION RESET TIME ZONE
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 3 (a)->{1,5}(c) RETURN p
+// reset a parameter
+SESSION RESET $graph
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 1 GROUP (a)->{1,5}(c) RETURN p
+// or
+SESSION RESET PARAMETER $graph
 
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 2 GROUPS (a)->{1,5}(c) RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p = SHORTEST 2 GROUPS (a)->{1,5}(c) 
-//LET pathLength = LENGTH(p)
-//RETURN count(p), pathLength 
-//GROUP BY pathLength 
-
-//MATCH (source:Category {name: "Graph"})
-//MATCH p=ALL SHORTEST (source)-{3}(n) 
-//RETURN n
-//EXCEPT 
-//MATCH (source:Category {name: "Graph"})
-//MATCH p=SHORTEST 2 GROUPS (source)-{1,2}(n) 
-//RETURN n
-
-//MATCH (TEMP c:Category) -[]-> (g:Lang)
-//WHERE c.name = "Graph"
-//RETURN g.name
-
-//MATCH (TEMP c:Category) -[]-> (g:Lang)
-//WHERE c.name = "Graph"
-//RETURN g.name, c.name
-
-//MATCH (c:Category)
-//MATCH (c)-(g:Lang)
-//RETURN c.name as name, COUNT(n) as total
-//GROUP BY name
-
-//MATCH (c:Category)
-//CALL {
-//    MATCH (c)-(g:Lang) 
-//    RETURN COUNT(g) as total
-//}
-//RETURN c.name as name, total
-
-//MATCH (c:Category)
-//CALL { 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COUNT(g:Lang) as total 
-//}
-//FILTER total > 2
-//RETURN g.name as name, total
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p=ALL SHORTEST (a)-[e]->{1,5}(c)
-//RETURN p
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p=SHORTEST 10 (a)-[e]->{1,5}(c)
-//CALL {
-//    FOR edge IN e
-//    RETURN SUM(edge.rank) as weight
-//}
-//RETURN p, weight
-//ORDER BY weight ASC
-//LIMIT 1
-
-//MATCH (a {_id: "a"}), (c {_id: "c"})
-//MATCH p=SHORTEST 10 (a)-[e]->{1,5}(c)
-//let weight = REDUCE(weight=0, edge in e | weight + edge.rank)
-//RETURN p, weight
-//ORDER BY weight ASC
-//LIMIT 1
-
-//CALL algo.page_rank("QueryLanguage", {
-//    params: { order: "DESC" }
-//}) YIELD rank 
-//MATCH (n {_uuid: rank._uuid})
-//RETURN n.name LIMIT 10
-
-//FOR queryName in ["GQL", "UQL", "nonQuery"]
-//OPTIONAL MATCH (g {name: queryName})
-//RETURN queryName, g.year
-
-//FOR queryName in ["GQL", "UQL", "nonQuery"]
-//OPTIONAL { 
-//    MATCH (g {name: queryName}) 
-//    MATCH (g)-(c:Category) 
-//}
-//RETURN c.name
-
-//FOR queryName in ["GQL", "UQL", "nonQuery"]
-//OPTIONAL ( 
-//    MATCH (g {name: queryName}) 
-//    MATCH (g)-(c:Category) 
-//)
-//RETURN c.name
-
-//FOR category in ["Graph", "Relational", "Quantum"]
-//OPTIONAL CALL { 
-//    MATCH (c {name: category }) 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COLLECT_LIST(g.name) as languages
-//}
-//RETURN category, languages
-
-//FOR category in ["Graph", "Relational", "Quantum"]
-//OPTIONAL CALL { 
-//    MATCH (c {name: category }) 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COLLECT_LIST(g.name) as languages
-//}
-//LET languages = COALESCE(languages, [])
-//RETURN category, languages
-
-//FOR category in ["Graph", "Relational", "Quantum"]
-//OPTIONAL CALL { 
-//    MATCH (c {name: category }) 
-//    MATCH (c)-(g:Lang) 
-//    RETURN COLLECT_LIST(g.name) as languages
-//}
-//LET lang = CASE WHEN languages IS NULL 
-//                THEN [] 
-//                ELSE languages
-//           END
-//RETURN category, languages
-
-
-
-
-
-
+// close session
+SESSION CLOSE
 
 
 

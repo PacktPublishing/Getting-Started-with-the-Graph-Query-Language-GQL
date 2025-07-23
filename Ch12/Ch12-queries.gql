@@ -1,67 +1,91 @@
-//MATCH p=()->() RETURN p
-
-//MATCH (n) RETURN count(n) as totalNodes
-
-//MATCH ()-[e]->() RETURN count(e) as totalEdges
-
-//MATCH (a:Account WHERE a.balance > 50000) RETURN a
-
-//MATCH (a:Account WHERE a.balance > 50000) RETURN count(a) as total, sum(a.balance)
 
 
-//MATCH p=(n:Account {_id : "account14i"})-[t:Transfer]->() RETURN t, p
+// retrieve entire graph
+MATCH p=()->() RETURN p
 
-//MATCH p=(n:Account {_id : "account14i"})-[:Transfer]->{2}() RETURN p
+// verify the number of nodes
+MATCH (n) RETURN count(n) as totalNodes
 
-//MATCH p=(n:Account {_id : "account14i"})-[t:Transfer]->{2}(m WHERE m._id <> n._id) RETURN p
+// verify the number of edges
+MATCH ()-[e]->() RETURN count(e) as totalEdges
 
-//MATCH (ramos {name : "Ramos, Cooper and Barker"}) MATCH (ramos)-[t:Transfer]->() RETURN sum(t.amount)
+// find account
+MATCH (a:Account WHERE a.balance > 50000) RETURN a
 
-//CREATE INDEX name ON NODE Account (name(20))
+// count and sum account
+MATCH (a:Account WHERE a.balance > 50000) RETURN count(a) as total, sum(a.balance)
 
-//MATCH (loan:Loan)
-//MATCH p=(borrower:Corporation)->(loan)-[:Transfer]->{1,5}(:Account)<-(borrower)
-//RETURN p
+// find account account14i and its transaction
+MATCH p=(n:Account {_id : "account14i"})-[t:Transfer]->() RETURN t, p
 
-//MATCH (loan:Loan)
-//MATCH p=(borrower:Corporation)->(loan)-[:Transfer]->{1,5}(:Account)<-(borrower)
-//LET Name = borrower.name, Reason = "Circular Loan Fraud"
-//RETURN DISTINCT table(Name, Reason)
+// Find transactions from account14i to other accounts in two steps
+MATCH p=(n:Account {_id : "account14i"})-[:Transfer]->{2}() RETURN p
 
-//CREATE HDC GRAPH TransactionGraph ON "hdc-server" 
-//OPTIONS {
-//	nodes: "*",
-//	edges: "*"
-//}
+// avoid loops
+MATCH p=(n:Account {_id : "account14i"})-[t:Transfer]->{2}(m WHERE m._id <> n._id) RETURN p
 
-//CALL algo.louvain.write("TransactionGraph", {
-//	params: {
-//		phase1_loop_num: 5, 
-//		min_modularity_increase: 0.1
-//	},
-//	return_params: {
-//		db: { property: 'communityID' }
-//	}
-//})
+// sum the total amount of all transactions from Ramos 
+MATCH (ramos {name : "Ramos, Cooper and Barker"}) 
+MATCH (ramos)-[t:Transfer]->() 
+RETURN sum(t.amount)
 
-//MATCH (n)
-//let cid = n.communityID
-//RETURN cid, count(n) as total
-//GROUP BY cid
-//ORDER BY total DESC
-//LIMIT 5
+// combine two matches
+MATCH (ramos {name : "Ramos, Cooper and Barker"})-[t:Transfer]->()
+RETURN sum(t.amount)
 
-//MATCH p=({communityID: 80})->({communityID: 80})
-//RETURN p
+// create index
+CREATE INDEX name ON NODE Account (name(20))
 
-//MATCH (n)
-//let cid = n.communityID
-//RETURN cid, count(n) as total
-//GROUP BY cid
-//ORDER BY total DESC
-//LIMIT 1
-//NEXT 
-//MATCH p=({communityID: cid})->({communityID: cid})
-//RETURN p
+// <borrower> -> [multiple steps transactions] -> <borrower>
+MATCH (loan:Loan)
+MATCH p=(borrower:Corporation)->(loan)-[:Transfer]->{1,5}(:Account)<-(borrower)
+RETURN p
+
+// directly return the fraud nodes and the reason for suspicion
+MATCH (loan:Loan)
+MATCH p=(borrower:Corporation)->(loan)-[:Transfer]->{1,5}(:Account)<-(borrower)
+LET Name = borrower.name, Reason = "Circular Loan Fraud"
+RETURN DISTINCT table(Name, Reason)
+
+// create the HDC graph
+CREATE HDC GRAPH TransactionGraph ON "hdc-server"
+OPTIONS {
+    nodes: { "*" :["*"]},
+    edges: { "*" :["*"]}
+}
+
+// execute the algorithm 
+CALL algo.louvain.write("TransactionGraph", {
+    params: {
+        phase1_loop_num: 5,
+        min_modularity_increase: 0.1
+    },
+    return_params: {
+        db: { property: 'communityID' } 
+    }
+})
+
+// find the top five largest community
+MATCH (n)
+let cid = n.communityID
+RETURN cid, count(n) as total
+GROUP BY cid
+ORDER BY total DESC
+LIMIT 5
+
+// retrieve the community graph for the largest community 
+MATCH p=({communityID: 80})->({communityID: 80})
+RETURN p
+
+// combine the two queries into one
+MATCH (n)
+let cid = n.communityID
+RETURN cid, count(n) as total
+GROUP BY cid
+ORDER BY total DESC
+LIMIT 1
+NEXT 
+MATCH p=({communityID: cid})->({communityID: cid})
+RETURN p
 
 

@@ -1,100 +1,143 @@
-// RETURN 1 <> 1
+// compare number `<>`
+RETURN 1 <> 1
 
-// RETURN "b" > "a"
+// compare string with `>`
+RETURN "b" > "a"
 
-//LET d1 = DATE("2019-03-14"),
-//    d2 = DATE("2019-03-15")
-//RETURN d2 > d1
+// compare date with `>`
+LET d1 = DATE("2019-03-14"),
+    d2 = DATE("2019-03-15")
+RETURN d2 > d1
 
-//LET d1 = DATE("2024-10-31")
-//RETURN d1 < "2024-11-01"
+// compare date with `<`
+LET d1 = DATE("2024-10-31")
+RETURN d1 < "2024-11-01"
 
-//RETURN TRUE = 1
+// compare bool with `=`
+RETURN TRUE = 1
 
-//RETURN TRUE > 0
+// compare bool with `>`
+RETURN TRUE > 0
 
-//RETURN FALSE = 0
+// compare bool with `=`
+RETURN FALSE = 0
 
-//RETURN TRUE = "true"
+// compare bool and string with `=`
+RETURN TRUE = "true"
 
-//LET a = 1 RETURN a
+// assign variable and return
+LET a = 1 RETURN a
 
-//MATCH p=()-() RETURN p
+// match a path to variable p
+MATCH p=()-() RETURN p
 
-//MATCH (n:Lang WHERE n.name = "GQL") SET n.year = 2024
+// assign value to property
+MATCH (n:Lang WHERE n.name = "GQL") SET n.year = 2024
 
-//RETURN "a" || "b"
+// concatenation operator
+RETURN "a" || "b"
 
-//LET a = TRUE, b = FALSE RETURN a OR b
+// predicate value type
+LET v = "hello"
+RETURN v IS TYPED STRING
 
-//LET a = 1 RETURN a > 0
+// predicate source and destination nodes
+MATCH (n {name: "SQL"})
+MATCH p=()-[e]->()
+FILTER n IS SOURCE OF e OR n IS DESTINATION OF e
+RETURN p
 
-//LET a = 1, b = 10
-//RETURN ((a > 0 AND b > 5) OR b > 20) IS TRUE
-
-//RETURN "a" || "b"
-
-//RETURN UPPER("a")
-
-//RETURN (1 + 1) * 2
-
-//RETURN ABS(1-10)
-
-//LET d = DATE("2024-10-29")
-//RETURN d + DURATION("P1D")
-
-//LET d = DURATION("P1Y10M")
-//RETURN d - DURATION("P1Y")
-
-//LET date1 = DATETIME("2024-11-01T12:00:00")
-//    date2 = DATETIME("2024-09-30T10:58:50")
-//LET duration1 = DURATION_BETWEEN(date1, date2)
-//RETURN duration1
-
-//LET list1 = ["a", "b"], list2 = ["b", "c", "d"]
-//RETURN list1 || list2
-
-//LET p1 = [n1,e1,n2], p2 = [n2,e2,n3]
-//RETURN p1 || p2
-
-//LET v = VALUE { MATCH (n) RETURN n LIMIT 1 }
-//RETURN v
-
-//LET v = VALUE { INSERT (n:Person) }
-//RETURN v
-
-//LET v = LET a = 1, b = 2 IN a + b END
-//RETURN v
-
-//MATCH (g:Lang) 
-//RETURN
-//    CASE g.name 
-//      WHEN "GQL" THEN "Graph Query Language"
-//      WHEN "Cypher" THEN "Neo4J's Query Language"
-//      WHEN "UQL" THEN "Ultipa Query Language"
-//      ELSE "Other Languages" 
-//    END
+// predicate label
+MATCH (n) WHERE n IS LABELED Lang
+RETURN n
 
 
-//CASE WHEN g.name = "GQL" THEN "Graph Query Language"
-//     WHEN g.name = "Cypher" THEN "Neo4J's Query Language"
-//     WHEN g.name = "UQL" THEN "Ultipa Query Language"
-//     ELSE "Other Languages"
-//END
 
-//RETURN NULLIF("a", "a")
+// produce boolean by boolean value expression and `OR`
+LET a = TRUE, b = FALSE RETURN a OR b
 
-//RETURN NULLIF("a", "b")
+// produce boolean by `>`
+LET a = 1 RETURN a > 0
 
-//RETURN NULLIF(NULL, "b")
+// multiple layer boolean value expression
+LET a = 1, b = 10
+RETURN ((a > 0 AND b > 5) OR b > 20) IS TRUE
 
-//RETURN COALESCE("a", "b")
 
-//RETURN COALESCE(NULL, "b")
+// uppercase letters
+RETURN UPPER("a")
 
-//RETURN COALESCE(NULL, NULL, "a")
+// matchematical operators
+RETURN (1 + 1) * 2
 
-//RETURN COALESCE(NULL, NULL, "a")
+// using number function
+RETURN ABS(1-10)
+
+// define a date and add a duration
+LET d = DATE("2024-10-29")
+RETURN d + DURATION("P1D")
+
+// define a duration and minus another
+LET d = DURATION("P1Y10M")
+RETURN d - DURATION("P1Y")
+
+// define 2 zoned datetime and calculate their duration
+LET date1 = ZONED_DATETIME("2024-11-01T12:00:00"),
+    date2 = ZONED_DATETIME("2024-09-30T10:58:50")
+LET duration1 = DURATION_BETWEEN(date1, date2)
+RETURN duration1
+
+// concatenate two lists
+LET list1 = ["a", "b"], list2 = ["b", "c", "d"]
+RETURN list1 || list2
+
+// concatenate two paths
+MATCH p1 = ({name: "GQL"})->(n), p2 = (n)<-()
+RETURN p1 || p2
+
+// assign results from a query to a variable
+LET v = VALUE { MATCH (n) RETURN n LIMIT 1 }
+RETURN v
+
+// let value expression
+LET v = LET a = 1, b = 2 IN a + b END
+RETURN v
+
+// case when expression
+MATCH (g:Lang)
+RETURN  CASE g.name
+            WHEN "GQL" THEN "Graph Query Language"
+            WHEN "Cypher" THEN "Neo4J's Query Language"
+            WHEN "UQL" THEN "Ultipa Query Language"
+        ELSE
+
+
+// or 
+MATCH (g:Lang)
+LET language =
+CASE WHEN g.name = "GQL" sTHEN "Graph Query Language"
+     WHEN g.name = "Cypher" THEN "Neo4J's Query Language"
+     WHEN g.name = "UQL" THEN "Ultipa Query Language"
+     ELSE "Other Languages"
+END
+RETURN DISTINCT "(" || g.name || ") " || language
+
+
+// NULLIF function usages
+RETURN NULLIF("a", "a")
+
+RETURN NULLIF("a", "b")
+
+RETURN NULLIF(NULL, "b")
+
+// COALESCE function usages
+RETURN COALESCE("a", "b")
+
+RETURN COALESCE(NULL, "b")
+
+RETURN COALESCE(NULL, NULL, "a")
+
+RETURN COALESCE(NULL, NULL, "a")
 
 
 

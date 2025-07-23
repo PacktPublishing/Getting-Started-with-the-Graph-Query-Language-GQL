@@ -1,89 +1,137 @@
-//RETURN ROUND(1.567, 2)
+// use mathematical functions
+RETURN  FLOOR(1.8),
+        CEIL(1.2),
+        ABS(-1),
+        MOD(10, 3),
+        ROUND(1.567,2)
 
-//RETURN CARDINALITY([1,2,3])
+// use logarithmic and exponential functions
+RETURN POWER(2, 4), SQRT(16), EXP(2), LOG(2, 8), LOG10(100), LN(100)
 
-//RETURN SIZE([1,2,3])
+// return length of a list
+RETURN CARDINALITY([1,2,3])
 
-//RETURN LENGTH("Graph Query")
+// or
+RETURN SIZE([1,2,3])
 
-//RETURN CHAR_LENGTH("Graph Query")
 
-//RETURN CHARACTOR_LENGTH("Graph Query") 
+// return length of a string
+RETURN CHAR_LENGTH("Graph Query")
 
-//RETURN LENGTH(x'1F')
+// or
+LENGTH("Graph Query")
 
-//RETURN BYTE_LENGTH(x'00')
+// or 
+CHARACTER_LENGTH("Graph Query") 
 
-//RETURN OCTET_LENGTH(x'00') 
+// return length of byte string
+RETURN LENGTH(x'1F')
 
-//MATCH p=()-[]-()-[]-() LIMIT 1 RETURN LEGNTH(p)
+// or
+RETURN BYTE_LENGTH(x'00')
 
-//MATCH p=()-[]-()-[]-() LIMIT 1 RETURN PATH_LENGTH(p)
+// or
+RETURN OCTET_LENGTH(x'00') 
 
-//MATCH p=()-[]-()-[]-() LIMIT 1 RETURN CARDINALITY(p)
+// return length of a path
+MATCH p=()-[]-()-[]-() LIMIT 1 RETURN LEGNTH(p)
 
-//RETURN LEGNTH({name : "GQL", year: 2024})
+// or
+MATCH p=()-[]-()-[]-() LIMIT 1 RETURN PATH_LENGTH(p)
 
-//RETURN REDIANS(60)
+// or
+MATCH p=()-[]-()-[]-() LIMIT 1 RETURN CARDINALITY(p)
 
-//RETURN DEGREES(pi())
+// return size of a record - the total of keys
+RETURN LENGTH({name : "GQL", year: 2024})
 
-//RETURN LEFT("Hello GQL", 5)
+// convert degree 60 to radians
+RETURN RADIANS(60)
 
-//RETURN RIGHT("Hello GQL", 3)
+// convert radians to degrees
+RETURN DEGREES(pi())
 
-//RETURN LEFT(x'1F2F3F', 2)
+// obtain first 5 letters
+RETURN LEFT("Hello GQL", 5)
 
-//LET s = "Hello GQL"
-//RETURN UPPER(s), LOWER(s)
+// obtain last 3 letters
+RETURN RIGHT("Hello GQL", 3)
 
-//RETURN TRIM(BOTH " " FROM "  Hello GQL  ")	
+// obtain first 2 bytes
+RETURN LEFT(x'1F2F3F', 2)
 
-//RETURN TRIM("  Hello GQL  ")
+// upper and lower a string
+LET s = "Hello GQL"
+RETURN UPPER(s), LOWER(s)
 
-//RETURN TRIM(LEADING "_" FROM "__Hello GQL"), TRIM(TRAILING "_" FROM "Hello GQL__")
+// trim spaces from both sides of a string
+RETURN TRIM(BOTH " " FROM " Hello GQL ")
 
-//RETURN TRIM(BOTH x'1F' FROM  x'1F2F1F1F')
+// or
+RETURN TRIM("  Hello GQL  ")
 
-//RETURN BTRIM("123123Hello GQL123123", "123")
+// trim specific string from left or right
+RETURN TRIM(LEADING "_" FROM "__Hello GQL"), TRIM(TRAILING "_" FROM "Hello GQL__")
 
-//RETURN NORMALIZE("①", NFKC)
+// trim byte from both sides of a byte string
+RETURN TRIM(BOTH x'1F' FROM  x'1F2F1F1F')
 
-//RETURN LOCAL_DATETIME({year: 2024, month: 5, day: 15, hour: 10, minute: 30, second: 0})
+// trim multiple characters from both sides
+RETURN BTRIM("123123Hello GQL123123", "123")
 
-//RETURN CURRENT_TIMESTAMP, LCOAL_TIMESTAMP
+// Normalizing strings
+RETURN NORMALIZE("①", NFKC)
 
-//MATCH (n:Lang)-(target:Category) RETURN COUNT(DISTINCT target)
+// define a local_datetime
+RETURN LOCAL_DATETIME({year: 2024, month: 5, day: 15, hour: 10, minute: 30, second: 0})
 
-//MATCH (c:Category) RETURN COUNT(c)
+// return current and local timestamp
+RETURN CURRENT_TIMESTAMP, LOCAL_TIMESTAMP
 
-//MATCH (c:Category)-(n) RETURN COUNT(*)
 
-//MATCH (g:Lang) 
-//LET age = YEAR(CURRENT_DATE) - g.year RETURN MAX(age) as maxAge, MIN(age) as minAge, AVG(age) as averageAge, SUM(age) as sumAge
+// count the number of distinct target nodes
+MATCH (n:Lang)-(target:Category) RETURN COUNT(DISTINCT target)
 
-//FOR v IN [1, 2, 3, 10, 29, 30]
-//RETURN STDDEV_SAMP(v) as sample_deviation, STDDEV_POP(v)  as population_deviation
+// count records
+MATCH (c:Category) RETURN COUNT(c)
 
-//FOR v IN [10, 20, 30] RETURN PERCENTILE_CONT(v, 0.5)
+// count all records
+MATCH (c:Category)-(n) RETURN COUNT(*)
 
-//FOR v IN [10, 20, 30] RETURN PERCENTILE_CONT(v, 0.25)
+// max, min, avg and sum
+MATCH (g:Lang) 
+LET age = YEAR(CURRENT_DATE) - g.year RETURN MAX(age) as maxAge, MIN(age) as minAge, AVG(age) as averageAge, SUM(age) as sumAge
 
-//FOR v IN [10, 20, 30] RETURN PERCENTILE_DISC(v, 0.25)
+// dtandard deviation functions
+FOR v IN [1, 2, 3, 10, 29, 30]
+RETURN STDDEV_SAMP(v) as sample_deviation, STDDEV_POP(v)  as population_deviation
 
-//MATCH (n:Lang) RETURN COLLECT_LIST(n.name)
+// PERCENTILE_CONT
+FOR v IN [10, 20, 30] RETURN PERCENTILE_CONT(v, 0.5)
 
-//RETURN TRIM([1,2,3,4,5], 2)
+FOR v IN [10, 20, 30] RETURN PERCENTILE_CONT(v, 0.25)
 
-//MATCH p=()-[]-() RETURN ELEMENTS(p) LIMIT 1
+// PERCENTILE_DISC
+FOR v IN [10, 20, 30] RETURN PERCENTILE_DISC(v, 0.25)
 
-//RETURN CAST("-123a" AS INT)
+// collect records as a list
+MATCH (n:Lang) RETURN COLLECT_LIST(n.name)
 
-//RETURN CAST("-12345b6789" AS INT) 
+// trim a list
+RETURN TRIM([1,2,3,4,5], 2)
 
-//RETURN CAST([1,2,3] AS STRING)
+// get a list of nodes or edges from a path
+MATCH p=()-[]-() RETURN ELEMENTS(p) LIMIT 1
 
-//LET v = [1,3,5] RETURN reduce(_sum = 0, item in v | _sum + item) 
+// cast string to int
+RETURN CAST("-123a" AS INT)
+
+RETURN CAST("-12345b6789" AS INT) 
+
+RETURN CAST([1,2,3] AS STRING)
+
+// reduce a list
+LET v = [1,3,5] RETURN reduce(_sum = 0, item in v | _sum + item) 
 
 
 

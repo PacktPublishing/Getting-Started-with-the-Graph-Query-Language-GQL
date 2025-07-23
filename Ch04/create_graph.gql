@@ -12,6 +12,9 @@ CREATE PROPERTY GRAPH QLGraph {
   EDGE BELONGS_TO ()-[]->()
 }
 
+// drop graph
+DROP GRAPH QLGraph
+
 
 // create graph type
 CREATE GRAPH TYPE QLGraphType {
@@ -37,4 +40,11 @@ DROP GRAPH TYPE QLGraphModel2
 
 // drop graph type if it exists
 DROP GRAPH TYPE IF EXISTS QLGraphModel2
+
+// create graph based on an existing one
+CREATE GRAPH NewQLGraph LIKE QLGraph
+
+// copy a graph
+CREATE GRAPH NewQLGraph AS COPY OF QLGraph
+
 

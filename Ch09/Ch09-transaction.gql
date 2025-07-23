@@ -1,0 +1,16 @@
+// a read only transaction
+START TRANSACTION READ ONLY
+MATCH (n) FILTER n.name = "GQL" SET n.name = "gql"
+COMMIT
+
+// a transaction with data modifications
+START TRANSACTION
+MATCH (n) FILTER n.name = "GQL"
+SET n.name = "gql"
+COMMIT
+
+// roll back changes in a transaction
+START TRANSACTION
+MATCH (n) FILTER n.name = "GQL"
+SET n.name = "gql"
+ROLLBACK

@@ -1,170 +1,238 @@
-//SHOW GRAPH
+// list graph
+SHOW GRAPH
 
-//CREATE GRAPH userBehaviors {
-//    NODE Person (:Person {name string, age int32}),
-//    EDGE Follows ()-[:Follows]->()
-//} 
-//ON SHARDS ['1', '2', '3'] 
-//PARTITION BY CRC32
-//COMMENT 'a graph stores user behavior'
+// or 
+SHOW GRAPHS
 
-//ALTER GRAPH QueryLanguage RENAME TO QueryLang
 
-//ALTER GRAPH QueryLanguage COMMENT 'a graph stores query language.'
+// creating a graph with extended options
+CREATE GRAPH userBehaviors {
+    NODE Person (:Person {name string, age int32}),
+    EDGE Follows ()-[:Follows]->()
+}
+EDGE KEY id string
+ON SHARDS [1]
+PARTITION BY CRC32
+COMMENT 'a graph stores user behavior'
 
-//SHOW NODE SCHEMA
 
-//ALTER GRAPH userBehaviors 
-//ADD NODE { 
-//    User (:User { name string, age int32} ),
-//    Product (:Product {name string, price float})
-//}
+// alter graph name
+ALTER GRAPH userBehaviors RENAME TO SocialNetwork
 
-//ALTER GRAPH userBehaviors DROP NODE User, Product
+// alter graph comment
+ALTER GRAPH SocialNetwork COMMENT 'a social network.'
 
-//ALTER NODE User RENAME TO Person
+// list node schemas/types
+SHOW NODE SCHEMA
 
-//ALTER NODE User COMMENT 'user details.'
+// list edge schemas/types
+SHOW EDGE SCHEMA
 
-//SHOW NODE PROPERTY
+// add new node schemas/types
+ALTER GRAPH SocialNetwork
+ADD NODE {
+    User ({name string, age int32}),
+    Product ({name string, price float})
+}
 
-//SHOW NODE User PROPERTY
+// drop node schemas/types
+ALTER GRAPH SocialNetwork DROP NODE User, Product
 
-//ALTER NODE User ADD PROPERTY {name string, age int32}
+// rename node schemas/types
+ALTER NODE Person RENAME TO User
 
-//ALTER NODE User DROP PROPERTY name, age
+// update the comment of node schema/type
+ALTER NODE User COMMENT 'user details'
 
-//ALTER NODE * ADD PROPERTY {rank float}
+// list node properties
+SHOW NODE PROPERTY
 
-//ALTER NODE * DROP PROPERTY rank
+// add node properties
+ALTER NODE User ADD PROPERTY {gender string, email string}
 
-//ALTER NODE Person RENAME PROPERTY name TO username
+// remove node properties
+ALTER NODE User DROP PROPERTY gender, email
 
-//ALTER NODE Person ADD CONSTRAINT cons_name NOT NULL (name)
+// add node properties for all node schemas/types
+ALTER NODE * ADD PROPERTY {rank float}
 
-//ALTER NODE Person DROP CONSTRAINT cons_name
+// remove node properties for all node schemas/types
+ALTER NODE * DROP PROPERTY rank
 
-//ALTER EDGE * ADD CONSTRAINT EDGE KEY edge_key (id)
+// rename property
+ALTER NODE User RENAME PROPERTY name TO username
 
-//CREATE INDEX name ON NODE Person ( firstname(10) )
+// add NOT NULL contraint to username property on User node schema/type
+ALTER NODE User ADD CONSTRAINT NOT NULL ON username
 
-//ON NODE Person ( firstname(10), lastname(10) )
+// list node CONSTRAINT
+SHOW NODE CONSTRAINT
 
-//CREATE FULLTEXT name ON NODE Person ( firstname )
+// list edge CONSTRAINT
+SHOW EDGE CONSTRAINT
 
-//CREATE VECTOR INDEX factor ON NODE * (embedding) OPTIONS {
-//	vector.dimensions : 1024,
-//	vector.similarity_function : 'cosine'
-//}
+// remove NOT NULL CONSTRAINT
+ALTER NODE User DROP CONSTRAINT NOT NULL ON username
 
-//SHOW NODE INDEX
+// add EDGE KEY CONSTRAINT
+ALTER EDGE * ADD CONSTRAINT EDGE KEY id string
 
-//SHOW NODE FULLTEXT
+// remove EDGE KEY
+ALTER EDGE * DROP CONSTRAINT EDGE KEY
 
-//DROP NODE INDEX username
+// create a node string index with fixed length
+CREATE INDEX name ON NODE User ( username(10) )
 
-//SHOW HDC GRAPHS
+// create a node string index with default length
+CREATE INDEX name ON NODE User ( username )
 
-//CREATE HDC GRAPH queryLang ON "hdc-server" 
-//OPTIONS {
-//  nodes: { 
-//    Lang: "*",
-//    DB: "*"
-//  },
-//  edges: "*"
-//}
+// create compound index
+CREATE INDEX nameWithAge ON NODE User ( username, age )
 
-//CREATE HDC GRAPH queryLang ON "hdc-server" 
-//OPTIONS {
-//  queries: ["MATCH (source:Lang)-[edge]->(target:DB)  RETURN source, edge, target"]
-//}
+// crete FULLTEXT index
+CREATE FULLTEXT name ON NODE User ( username )
 
-//CREATE HDC GRAPH queryLang ON "hdc-1" 
-//OPTIONS {
-//  nodes: { 
-//    Lang: "*",
-//    DB: "*"
-//  },
-//  edges: "*",
-//  update: "sync",
-//}
+// create vector index
+CREATE VECTOR INDEX factor ON NODE User (embedding) OPTIONS {
+    dimensions: 128,
+    similarity_function: "COSINE"
+}
 
-//DROP HDC GRAPH queryLang
+// list node index
+SHOW NODE INDEX
 
-//CALL algo.degree("queryLang", {
-//  params: {
-//  direction: "out",
-//  order: "desc",
-//  limit: 10
-//}, return_params: { stream: {} } }) YIELD topDegree
-//MATCH (n WHERE n._uuid = topDegree._uuid)
-//RETURN n
+// list FULLTEXT index
+SHOW NODE FULLTEXT
 
-//SHOW USERS
+// remove a node index
+DROP NODE INDEX name
 
-//CREATE USER user001 WITH PASSWORD '@passwor6'
+// list HDC Graphs
+SHOW HDC GRAPHS
 
-//DROP USER user001
+// create a HDC Graph
+CREATE HDC GRAPH HDCSocialGraph ON "hdc-1"
+OPTIONS {
+    nodes: {
+        User: "*"
+    },
+    edges: "*"
+}
 
-//ALTER USER user001 RENAME TO user1
+// create HDC graph by queries, /may not supported yet
+CREATE HDC GRAPH HDCSocialGraph ON "hdc-1"
+OPTIONS {
+    queries: ["MATCH (source:User)-[edge]->(target:User) RETURN source, edge, target"]
+}
 
-//ALTER USER user1 SET PASSWORD 'New@Passwor5'
+// create a dynamic HDC graph
+CREATE HDC GRAPH HDCSocialGraph ON "hdc-1"
+OPTIONS {
+    nodes: {
+        User: "*"
+    },
+    edges: "*",
+    update: "sync"
+}
 
-//GRANT ['CREATE_USER', 'DROP_USER'] TO user001
+// list Jobs
+SHOW JOB
 
-//GRANT * TO USER user001
+// DROP HDC GRAPH
+DROP HDC GRAPH HDCSocialGraph
 
-//REVOKE ['CREATE_USER', 'DROP_USER'] FROM user001
+// run algorithm 
+CALL algo.degree.stream("HDCSocialGraph ", {
+    direction: "out",
+    order: "desc",
+    limit: 10
+}) YIELD topDegree
+MATCH (n WHERE n._uuid = topDegree._uuid)
+RETURN n, topDegree
 
-//GRANT ['INSERT', 'DELETE'] ON QueryLanguage TO user001
+// list users
+SHOW USERS
 
-//GRANT * ON QueryLanguage TO user001
+// create user
+CREATE USER user001 WITH PASSWORD '@passwor6'
 
-//GRANT * ON * TO user001
+// delete user
+DROP USER user001
 
-//REVOKE * ON QueryLanguage FROM user001
+// rename user
+ALTER USER user001 RENAME TO user1
 
-//GRANT ['READ'] ON NODE Person (name, age) TO user001
+// reset password
+ALTER USER user1 SET PASSWORD 'New@Passwor5'
 
-//GRANT * ON NODE Person * TO user001
+// grant privileges to user
+GRANT ['CREATE_USER', 'DROP_USER'] TO user1
 
-//GRANT * ON NODE * * TO user001
+GRANT * TO user1
 
-//REVOKE ['WRITE'] ON NODE Person * FROM user001
+// revoke privileges from user
+REVOKE ['CREATE_USER', 'DROP_USER'] FROM user1
 
-//SHOW ROLES
+// grant privileges on graph to a user
+GRANT ['INSERT', 'DELETE'] ON SocialNetwork TO user1
 
-//CREATE ROLE readOnly
+GRANT * ON SocialNetwork TO user1
 
-//DROP ROLE readOnly
+GRANT * ON * TO user1
 
-//GRANT ['SHOW_GRAPH','SHOW_USER'] TO ROLE readOnly
 
-//GRANT ['READ,'SHOW_SCHEMA'] ON QueryLanguage TO ROLE readOnly
+// revoke privileges on graph from user
+REVOKE * ON SocialNetwork FROM user1
 
-//REVOKE ['WRITE'] ON QueryLanguage * FROM ROLE readOnly
+// set property privileges
+GRANT ['READ'] ON NODE User(name, age) TO user1
 
-//GRANT ROLE readOnly TO user001
+GRANT * ON NODE User * TO user1
 
-//GRANT ROLE readOnly TO ROLE admin
+GRANT * ON NODE * * TO user1
 
-//SHOW JOBS
+REVOKE ['WRITE'] ON NODE User * FROM user1
 
-//STOP JOB 1
+// list roles
+SHOW ROLES
 
-//DELETE JOB 1
+// create role
+CREATE ROLE readOnly
 
-//TRUNCATE GRAPH QueryLanguage
+// remove role
+DROP ROLE readOnly
 
-//TRUNCATE QueryLanguage
+// grant privileges to role
+GRANT ['SHOW_GRAPH','SHOW_USER'] TO ROLE readOnly
 
-//TRUNCATE NODE * ON QueryLanguage
+// grant privileges on graph to role
+GRANT ['READ','SHOW_SCHEMA'] ON SocialNetwork TO ROLE readOnly
 
-//TRUNCATE NODE Person ON QueryLanguage
+// grant property privileges to role
+GRANT ['READ', 'WRITE'] ON NODE User * TO ROLE readOnly
 
-//MATCH (p:Person) DELETE p
+// assign role to user
+GRANT ROLE readOnly TO user1
 
+// assign role to role
+GRANT ROLE readOnly TO ROLE admin
 
+// STOP JOB
+STOP JOB 1
 
+// DELETE JOB
+DELETE JOB 1
+
+// Truncate graph
+TRUNCATE GRAPH SocialNetwork
+
+// or
+TRUNCATE SocialNetwork
+
+// truncate all node
+TRUNCATE NODE * ON SocialNetwork
+
+// truncate a type of node
+TRUNCATE NODE User ON SocialNetwork
 
 
