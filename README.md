@@ -53,7 +53,25 @@ By the end of this book, you’ll confidently query and update graph data, run g
 This book is ideal for graph database developers, DBAs, programmers, data engineers, and analysts eager to learn the new graph database standard, GQL. A basic understanding of graph and relational databases, data models, and programming will make the content easier to grasp. While the book is accessible to those without a background in graph theory, familiarity with concepts like nodes, edges, relationships, and the distinction between directed and undirected graphs will enhance your learning experience.
 </details>
 
----
+<details>
+ <summary><h2>Errata </h2></summary>
+
+ <summary><h4>Page 81:</h4></summary>
+ 
+ ```
+MATCH p = (areith)-[:Friend]-(gison)RETURN p
+```
+This query will retrieve both paths: (areith)-[:Friend]->(gison), and (gison)<-[:Friend]-(areith).
+
+_Should be_
+
+```
+MATCH p = ()-[:Friend]-() RETURN p
+```
+This query will retrieve paths: Gison -> Boyard, Areith -> Gison , Gison <-Areith , Boyard <- Gison
+
+</details>
+
 <details> 
   <summary><h2>Repository Structure</h2></summary>
     
